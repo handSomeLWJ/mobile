@@ -8,17 +8,11 @@ import './assets/css/reset.css'
 // 引入vant
 import Vant from 'vant';
 import 'vant/lib/index.css';
-
 Vue.use(Vant);
 
-/* import { request } from './network/request'
-
-request({
-    url: '/product/pagination',
-    params: { page: 1, size: 10 }
-}).then(data => {
-    console.log(data.data);
-}) */
+// 引入粘性布局   吸附
+import { Sticky } from 'vant';
+Vue.use(Sticky);
 
 Vue.config.productionTip = false
 
