@@ -14,6 +14,9 @@ Vue.use(Vant);
 import { Sticky } from 'vant';
 Vue.use(Sticky);
 
+// 重新获取用户信息
+store.dispatch("getUserInfo")
+
 Vue.config.productionTip = false
 
 new Vue({

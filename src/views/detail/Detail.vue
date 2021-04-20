@@ -59,7 +59,12 @@
       </van-tabs>
       <!-- 加入购物车 -->
       <van-goods-action class="b-border">
-        <van-goods-action-icon icon="like-o" color="red" text="收藏" />
+        <van-goods-action-icon
+          :icon="isLike ? 'like' : 'like-o'"
+          color="red"
+          text="收藏"
+          @click="addLike"
+        />
         <van-goods-action-icon icon="cart-o" text="购物车" />
         <van-goods-action-button type="warning" text="加入购物车" />
         <van-goods-action-button type="danger" text="立即购买" />
@@ -69,8 +74,9 @@
 </template>
 
 <script>
-import { detailContent } from "../../network/api";
+import { detailContent, createLike, deleteLike } from "../../network/api";
 import "../../utils/filter/index";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "Detail",
   components: {},
@@ -80,18 +86,47 @@ export default {
       detailList: {},
     };
   },
-  watch: {},
-  computed: {},
+  computed: {
+    /* 判断是否已经收藏 */
+    ...mapState(["userInfo"]),
+    isLike() {
+      if (!this.userInfo.likeList) return;
+      return this.userInfo.likeList.some(
+        (item) => item.product_id == this.$route.query.id
+      );
+    },
+  },
   methods: {
+    ...mapMutations(["changeLikeList"]),
+    /* 获取页面数据 */
     async getDetailContent() {
       const { data } = await detailContent(this.$route.query.id);
       this.detailList = data;
+    },
+    /* 点击添加收藏  在methods修改是为了能及时显示收藏的状态 */
+    async addLike() {
+      const { id } = this.$route.query;
+      // const likeList = await createLike();
+      // console.log(likeList);
+      if (this.isLike) {
+        // 已经收藏，点击取消收藏
+        const { errcode } = await deleteLike(id);
+        console.log(errcode);
+        if (errcode !== 0) return;
+        this.changeLikeList(this.detailList.product_id);
+      } else {
+        // 还没有收藏，点击进行收藏
+        const { errcode } = await createLike(id);
+        console.log(errcode);
+        if (errcode !== 0) return;
+        const { id: product_id, price, name, cover } = this.detailList;
+        this.changeLikeList({ product_id, price, name, cover });
+      }
     },
   },
   created() {
     this.getDetailContent();
   },
-  mounted() {},
 };
 </script>
 <style scoped lang="less">
