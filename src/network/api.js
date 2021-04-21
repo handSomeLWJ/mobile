@@ -1,3 +1,6 @@
+/* 设置图片公共地址路径 */
+export const IMGBASEURL = 'http://192.168.0.129:8360'
+
 /* 首页内容请求 */
 import { request } from './request'
 export const homeContent = (page, size = 10) => request({
@@ -34,4 +37,22 @@ export const reqLogin = (data) => request({
 /* 获取用户信息 /user/info  get */
 export const reqUserInfo = () => request({
     url: '/user/info'
+})
+
+/* 加入购物车  /cart/update  post  product_id   */
+export const reqUpdateCart = (product_id) => request({
+    url: '/cart/update',
+    method: 'post',
+    data: { product_id }
+})
+
+/* 获取购物车数据  /cart/all  get */
+export const reqCartAll = () => request({
+    url: '/cart/all',
+})
+
+/* 删除购物车数据 /cart/delete get */
+export const delCartItem = (product_id) => request({
+    url: '/cart/delete',
+    params: { product_id }
 })

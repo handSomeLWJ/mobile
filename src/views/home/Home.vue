@@ -36,14 +36,6 @@
       @click="backTopClick"
       v-show="btnBackTop"
     />
-    <!-- 加载中 -->
-    <van-loading
-      type="spinner"
-      size="50px"
-      vertical
-      color="#1989fa"
-      v-show="load"
-    />
   </div>
 </template>
 
@@ -61,7 +53,7 @@ export default {
       totalPage: 0, //总页数
       flag: false, //是否加载下一页
       btnBackTop: false, //回到顶部
-      load: false, //加载中
+      currentScrollTop: 0, //离开Home之前的scrollTop
     };
   },
   watch: {},
@@ -106,6 +98,16 @@ export default {
   },
   created() {
     this.getHomeContent(this.page);
+  },
+  /* 保存浏览器位置 */
+  // 离开路由之前
+  beforeRouteLeave(to, from, next) {
+    this.currentScrollTop = this.$refs.main.scrollTop;
+    next();
+  },
+  // keep-alive 组件激活时调用。该钩子在服务器端渲染期间不被调用
+  activated() {
+    this.$refs.main.scrollTop = this.currentScrollTop;
   },
   mounted() {},
 };
@@ -158,15 +160,5 @@ export default {
   right: 20px;
   color: #666;
   font-size: 60px;
-}
-
-/* 加载中 */
-.van-loading {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0;
-  margin: 100px auto;
 }
 </style>

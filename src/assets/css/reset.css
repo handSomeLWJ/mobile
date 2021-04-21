@@ -113,6 +113,14 @@ table {
 }
 
 
+/* 顶部导航栏加阴影 */
+
+.t-border {
+    box-shadow: 0 1px 3px #999;
+    ;
+}
+
+
 /* 中间内容区域  作滚动高度 */
 
 .mainContent {

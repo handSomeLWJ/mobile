@@ -1,11 +1,13 @@
 <template>
   <div id="app">
-    <van-tabbar v-model="active" v-if="isshowTabbar" class="b-border">
+    <van-tabbar v-model="active" route v-if="isshowTabbar" class="b-border">
       <van-tabbar-item icon="star-o" to="/home">精选</van-tabbar-item>
       <van-tabbar-item icon="cart-o" to="/cart">购物车</van-tabbar-item>
       <van-tabbar-item icon="manager-o" to="/my">我的</van-tabbar-item>
     </van-tabbar>
-    <router-view />
+    <keep-alive include="Home">
+      <router-view />
+    </keep-alive>
   </div>
 </template>
     <script>

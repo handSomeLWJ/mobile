@@ -7,6 +7,7 @@
       left-arrow
       @click-left="$router.back()"
       fixed
+      class="t-border"
     />
     <main class="mainContent">
       <!-- 轮播图 -->
@@ -65,8 +66,16 @@
           text="收藏"
           @click="addLike"
         />
-        <van-goods-action-icon icon="cart-o" text="购物车" />
-        <van-goods-action-button type="warning" text="加入购物车" />
+        <van-goods-action-icon
+          icon="cart-o"
+          text="购物车"
+          @click="$router.push('/cart')"
+        />
+        <van-goods-action-button
+          type="warning"
+          text="加入购物车"
+          @click="addCart"
+        />
         <van-goods-action-button type="danger" text="立即购买" />
       </van-goods-action>
     </main>
@@ -74,7 +83,12 @@
 </template>
 
 <script>
-import { detailContent, createLike, deleteLike } from "../../network/api";
+import {
+  detailContent,
+  createLike,
+  deleteLike,
+  reqUpdateCart,
+} from "../../network/api";
 import "../../utils/filter/index";
 import { mapState, mapMutations } from "vuex";
 export default {
@@ -122,6 +136,12 @@ export default {
         const { id: product_id, price, name, cover } = this.detailList;
         this.changeLikeList({ product_id, price, name, cover });
       }
+    },
+    /* 加入购物车 */
+    async addCart() {
+      const { errcode } = await reqUpdateCart(this.$route.query.id);
+      if (errcode === 901101 || errcode === 0) return this.$toast("添加成功");
+      this.$toast("添加失败，请登录");
     },
   },
   created() {
