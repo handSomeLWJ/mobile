@@ -13,6 +13,12 @@ const Detail = () =>
     import ('../views/detail/Detail')
 const Login = () =>
     import ('../views/login/Login')
+const OrderConfirm = () =>
+    import ('../views/orderConfirm/OrderConfirm')
+const AddressList = () =>
+    import ('../views/addressList/AddressList')
+const AddressEdit = () =>
+    import ('../views/addressEdit/AddressEdit')
 
 const routes = [{
         path: '/',
@@ -52,7 +58,33 @@ const routes = [{
         component: Login,
         name: 'Login'
     },
-
+    /* 确认订单页 */
+    {
+        path: '/orderConfirm',
+        component: OrderConfirm,
+        name: 'OrderConfirm',
+        meta: {
+            isLogin: true
+        }
+    },
+    /* 收货地址页 */
+    {
+        path: '/addressList',
+        component: AddressList,
+        name: 'AddressList',
+        meta: {
+            isLogin: true
+        }
+    },
+    /* 修改地址页面 */
+    {
+        path: '/addressEdit',
+        component: AddressEdit,
+        name: 'AddressEdit',
+        meta: {
+            isLogin: true
+        }
+    },
 ]
 
 const router = new VueRouter({

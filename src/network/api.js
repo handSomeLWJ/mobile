@@ -56,3 +56,23 @@ export const delCartItem = (product_id) => request({
     url: '/cart/delete',
     params: { product_id }
 })
+
+/* 修改用户地址  /user_address/update  post  url参数：id：地址id */
+export const reqUpdateAddress = (id, data) => request({
+    url: '/user_address/update?id=' + id,
+    method: 'post',
+    data
+})
+
+/* 删除用户地址  /user_address/delete  get    url参数：id：地址id  */
+export const reqDeleteAddress = (id) => request({
+    url: '/user_address/delete',
+    params: { id }
+})
+
+/* 新增用户地址   /user_address/create */
+export const reqAddAddress = data => request({
+    url: '/user_address/create',
+    method: 'post',
+    data
+})

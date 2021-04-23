@@ -22,6 +22,20 @@ export default new Vuex.Store({
                 // 如果传过来不是对象，则是取消收藏
             let index = state.userInfo.likeList.findIndex(item => item.product_id == data)
             likeList.splice(index, 1)
+        },
+        /* 改变收货地址   updateAddress */
+        updateAddress(state, data) {
+            let index = state.userInfo.addressList.findIndex(item => item.id == data.id)
+            state.userInfo.addressList.splice(index, 1, data)
+        },
+        /* 删除收获地址   deleteAddressMu  */
+        deleteAddressMu(state, id) {
+            let index = state.userInfo.addressList.findIndex(item => item.id === id)
+            state.userInfo.addressList.splice(index, 1)
+        },
+        /* 新增收获地址   addAddressMu */
+        addAddressMu(state, data) {
+            state.userInfo.addressList.unshift(data)
         }
     },
     actions: {

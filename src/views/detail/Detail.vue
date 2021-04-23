@@ -76,7 +76,11 @@
           text="加入购物车"
           @click="addCart"
         />
-        <van-goods-action-button type="danger" text="立即购买" />
+        <van-goods-action-button
+          type="danger"
+          text="立即购买"
+          @click="buyNowClick"
+        />
       </van-goods-action>
     </main>
   </div>
@@ -91,6 +95,8 @@ import {
 } from "../../network/api";
 import "../../utils/filter/index";
 import { mapState, mapMutations } from "vuex";
+/* 引入storage */
+import storage from "../../utils/storage/index";
 export default {
   name: "Detail",
   components: {},
@@ -142,6 +148,17 @@ export default {
       const { errcode } = await reqUpdateCart(this.$route.query.id);
       if (errcode === 901101 || errcode === 0) return this.$toast("添加成功");
       this.$toast("添加失败，请登录");
+    },
+    /* 点击立即购买  将跳转到确认订单页面 跳转时携带部分数据detailList到确认页面显示，使用session技术存储，到确认页面再取出detailList那部分存储数据 */
+    buyNowClick() {
+      this.$router.push("/OrderConfirm");
+      console.log(this.detailList);
+      // 判断有没有token  若没有就return
+      if (!storage.session.get("token")) return;
+      let { id: product_id, name, cover, price } = this.detailList;
+      storage.session.set("orderList", [
+        { product_id, name, cover, price, count: 1 },
+      ]);
     },
   },
   created() {

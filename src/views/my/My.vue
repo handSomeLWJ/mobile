@@ -3,7 +3,7 @@
     <!-- header头部 -->
     <header>
       <template v-if="isLogin">
-        <img :src="imgUrl + userInfo.avatar" alt="" />
+        <img :src="imgSrc" alt="" />
         <span>{{ userInfo.nickname }}</span>
       </template>
       <template v-else>
@@ -22,7 +22,12 @@
     </van-grid>
     <van-cell title="我的订单" icon="records" is-link />
     <van-cell title="我的收藏" icon="star-o" is-link />
-    <van-cell title="收货地址" icon="location-o" is-link />
+    <van-cell
+      title="收货地址"
+      icon="location-o"
+      is-link
+      :to="{ path: '/addressList', query: { from: 'my' } }"
+    />
     <van-cell title="用户设置" icon="setting-o" is-link />
   </div>
 </template>
@@ -48,6 +53,12 @@ export default {
     isLogin() {
       const { name, id } = this.userInfo;
       return !!name || !!id;
+    },
+    /* 获取头像地址 */
+    imgSrc() {
+      return this.userInfo.avatar
+        ? this.imgUrl + this.userInfo.avatar
+        : "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1716611239,1113008250&fm=224&gp=0.jpg";
     },
   },
   methods: {},
