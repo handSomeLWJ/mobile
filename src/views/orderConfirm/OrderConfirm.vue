@@ -29,23 +29,35 @@
       />
     </main>
     <!-- 付款栏@submit="onSubmit" -->
-    <van-submit-bar :price="totalPrice" button-text="付款" class="b-border">
+    <van-submit-bar
+      :price="totalPrice"
+      button-text="付款"
+      class="b-border"
+      @submit="paySubmit"
+    >
       <slot default>共计：{{ totalCount }} 件</slot>
     </van-submit-bar>
+    <!-- 支付键盘跳出 ref=ejectKeyboard-->
+    <keyboard :orderId="order_id" ref="ejectKeyboard"></keyboard>
   </div>
 </template>
 
 <script>
 /* 引入storage */
 import storage from "../../utils/storage/index";
+// 引入键盘组件
+import Keyboard from "../../components/keyboard/Keyboard";
+/* 引入下单接口 */
+import { reqOrderCreate } from "../../network/api";
 export default {
   name: "OrderConfirm",
-  components: {},
+  components: { Keyboard },
   props: {},
   data() {
     return {
       orderList: [],
       selectAddressMsg: {},
+      order_id: "", //订单id
     };
   },
   watch: {},
@@ -75,7 +87,26 @@ export default {
         : "地址信息";
     },
   },
-  methods: {},
+  methods: {
+    /* 点击付款   向后台提交数据 */
+    async paySubmit() {
+      // 先判断是否有收货地址
+      if (!this.hasSelectAddressMsg) return this.$toast("请选择收获地址");
+      // 取出用户的收货地址id
+      const { id: user_address_id } = this.selectAddressMsg;
+      // 取出商品数据，需要传给后台
+      const { orderList: orderProductList } = this;
+      const { errcode, data } = await reqOrderCreate(
+        orderProductList,
+        user_address_id
+      );
+      if (errcode !== 0) return this.$toast("下单失败");
+      // 付款需要订单id
+      this.order_id = data.id;
+      // 下单成功后弹出支付键盘
+      this.$refs.ejectKeyboard.show = true;
+    },
+  },
   created() {
     /* 一上来就开始获取订单数据渲染页面，订单数据从session存储中获取 */
     this.orderList = storage.session.get("orderList");

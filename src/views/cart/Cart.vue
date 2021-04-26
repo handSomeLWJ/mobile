@@ -122,8 +122,8 @@ export default {
       this.cartList.forEach((item) => {
         // 在复选框选中状态下的保留
         if (item.checked) {
-          let { id: product_id, name, cover, price, count } = item;
-          orderList.push({ product_id, name, cover, price, count });
+          let { product_id, name, cover, price, count } = item;
+          orderList.push({ product_id, name, price, cover, count });
         }
       });
       storage.session.set("orderList", orderList);

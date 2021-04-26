@@ -20,15 +20,15 @@
       <van-grid-item icon="logistics" text="已发货" />
       <van-grid-item icon="thumb-circle-o" text="已完成" />
     </van-grid>
-    <van-cell title="我的订单" icon="records" is-link />
-    <van-cell title="我的收藏" icon="star-o" is-link />
+    <van-cell title="我的订单" icon="records" is-link to="/myOrder" />
+    <van-cell title="我的收藏" icon="star-o" is-link to="/myLike" />
     <van-cell
       title="收货地址"
       icon="location-o"
       is-link
       :to="{ path: '/addressList', query: { from: 'my' } }"
     />
-    <van-cell title="用户设置" icon="setting-o" is-link />
+    <van-cell title="用户设置" icon="setting-o" is-link to="/userSetting" />
   </div>
 </template>
 

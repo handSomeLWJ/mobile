@@ -1,13 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { reqLogin, reqUserInfo } from '../network/api'
+// 引入地理位置
+import { reqLocation, reqLogin, reqUserInfo } from '../network/api'
 import router from '../router'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        userInfo: {}
+        userInfo: {},
+        locationCity: '定位中...'
     },
     mutations: {
         /* 赋值获取过来的登录信息给state.userInfo */
@@ -36,6 +38,18 @@ export default new Vuex.Store({
         /* 新增收获地址   addAddressMu */
         addAddressMu(state, data) {
             state.userInfo.addressList.unshift(data)
+        },
+        /* 修改昵称 */
+        changeNicknameMu(state, nickname) {
+            this.state.userInfo.nickname = nickname
+        },
+        /* 修改图片 */
+        changeAvatarMu(state, avatar) {
+            this.state.userInfo.avatar = avatar
+        },
+        /* 修改城市  定位 */
+        reqLocationCity(state, city) {
+            this.state.locationCity = city
         }
     },
     actions: {
@@ -54,6 +68,15 @@ export default new Vuex.Store({
                 context.commit("changeUserInfo", data)
                     // console.log("获取用户信息", data);
             }
+        },
+        /*   获取地理位置 reqLocation*/
+        getLocation(context) {
+            window.navigator.geolocation.getCurrentPosition(async position => {
+                const { latitude, longitude } = position
+                const res = await reqLocation(latitude, longitude)
+                const { city } = res.result.addressComponent
+                context.commit("reqLocationCity", city)
+            })
         }
     },
     modules: {}

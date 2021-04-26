@@ -1,24 +1,19 @@
 <template>
   <div>
-    <!-- 顶部nav -->
-    <van-nav-bar title="精选" fixed>
-      <template #right>
-        <van-icon name="search" size="18" @click="$router.push('/search')" />
-      </template>
-      <template #left>
-        <van-icon
-          name="location-o"
-          size="18"
-          @click="$router.push('/position')"
+    <van-nav-bar left-text="返回" left-arrow @click-left="$router.back()" fixed>
+      <template #title>
+        <van-search
+          v-model="value"
+          placeholder="请输入搜索关键词"
+          @input="debounce(getchangeValue)"
         />
-        <span>{{ locationCity }}</span>
       </template>
     </van-nav-bar>
     <!-- 内容main -->
-    <main class="mainContent p_content" @scroll="mainScroll" ref="main">
+    <main class="mainContent1 p_content" @scroll="mainScroll" ref="main">
       <div
         class="p_item"
-        v-for="item in itemList"
+        v-for="item in searchResultList"
         :key="item.id"
         @click="toDetail(item.id)"
       >
@@ -31,6 +26,7 @@
         </div>
       </div>
     </main>
+
     <!-- 回到顶部 
       
       v-show="showBakcTop"-->
@@ -44,35 +40,38 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { homeContent } from "../../network/api";
+import { searchContent } from "../../network/api";
 import "../../utils/filter/index";
 export default {
-  name: "Home",
+  name: "Search",
   components: {},
   props: {},
   data() {
     return {
-      itemList: [], // 放请求过来的数据
+      value: "",
+      searchResultList: [],
       page: 1, //当前页数
       totalPage: 0, //总页数
       flag: false, //是否加载下一页
       btnBackTop: false, //回到顶部
-      currentScrollTop: 0, //离开Home之前的scrollTop
+      debounceTimeId: "", // 定时器id,
     };
   },
   watch: {},
-  computed: {
-    ...mapState(["locationCity"]),
-  },
+  computed: {},
   methods: {
-    /* 请求p_item数据 */
-    async getHomeContent(page) {
-      this.flag = true;
-      let { data } = await homeContent(page);
-      this.itemList = [...this.itemList, ...data.data];
-      this.totalPage = data.totalPages;
-      this.flag = false;
+    /* 获取数据 */
+    async getchangeValue() {
+      const { errcode, data } = await searchContent(this.page, this.value);
+      if (errcode !== 0) return this.$toast("搜索数据获取失败");
+      this.searchResultList = data.data;
+    },
+    /* 防抖函数 debounce */
+    debounce(fn) {
+      clearTimeout(this.debounceTimeId);
+      this.debounceTimeId = setTimeout(() => {
+        fn();
+      }, 300);
     },
     /* 滚动事件 */
     mainScroll() {
@@ -82,7 +81,7 @@ export default {
       if (scrollHeight - offsetHeight <= scrollTop + 3) {
         this.page++;
         if (this.page > this.totalPage) return this.$toast("到底了！！！！");
-        this.getHomeContent(this.page);
+        this.getchangeValue(this.page);
       }
     },
     /* 回到顶部 */
@@ -95,33 +94,16 @@ export default {
         }
       }, 20);
     },
-    /* 跳到详情页 */
-    toDetail(id) {
-      this.$router.push({
-        path: "/detail",
-        query: { id },
-      });
-    },
   },
-  created() {
-    this.getHomeContent(this.page);
-  },
-  /* 保存浏览器位置 */
-  // 离开路由之前
-  beforeRouteLeave(to, from, next) {
-    this.currentScrollTop = this.$refs.main.scrollTop;
-    next();
-  },
-  // keep-alive 组件激活时调用。该钩子在服务器端渲染期间不被调用
-  activated() {
-    this.$refs.main.scrollTop = this.currentScrollTop;
-  },
+  created() {},
   mounted() {},
 };
 </script>
 <style scoped lang="less">
-/* 顶部nav */
-.van-nav-bar {
+.mainContent1 {
+  margin-top: 46px;
+  height: calc(100vh - 46px);
+  overflow-y: scroll;
 }
 /* 内容main区 */
 .p_content {
@@ -159,13 +141,5 @@ export default {
       }
     }
   }
-}
-/* 回到顶部 */
-.backTop {
-  position: fixed;
-  bottom: 80px;
-  right: 20px;
-  color: #666;
-  font-size: 60px;
 }
 </style>
